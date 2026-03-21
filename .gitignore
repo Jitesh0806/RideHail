@@ -1,0 +1,61 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Environment files (NEVER commit these)
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Docker
+.dockerignore
+
+# Terraform state (use remote state in production)
+*.tfstate
+*.tfstate.backup
+.terraform/
+*.tfvars
+
+# SSL certs (generate locally)
+infrastructure/docker/ssl/
+
+# Mobile
+mobile/android/.gradle/
+mobile/android/app/build/
+mobile/ios/Pods/
+mobile/ios/build/
+mobile/*.jks
+mobile/*.keystore
+
+# Misc
+*.tgz
+.cache/
