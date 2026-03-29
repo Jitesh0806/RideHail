@@ -25,6 +25,10 @@ export class NotificationsService {
     body: string,
     data?: Record<string, any>,
   ): Promise<void> {
+    if (!this.platformApplicationArn || !this.config.get('AWS_ACCESS_KEY_ID')) {
+      this.logger.debug(`[Mock] Push notification → "${title}": ${body}`);
+      return;
+    }
     try {
       // Register device endpoint
       const endpointCmd = new CreatePlatformEndpointCommand({
@@ -57,6 +61,10 @@ export class NotificationsService {
   }
 
   async sendSms(phoneNumber: string, message: string): Promise<void> {
+    if (!this.config.get('AWS_ACCESS_KEY_ID')) {
+      this.logger.debug(`[Mock] SMS → ${phoneNumber}: ${message}`);
+      return;
+    }
     try {
       const cmd = new PublishCommand({
         PhoneNumber: phoneNumber,

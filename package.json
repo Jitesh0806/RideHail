@@ -15,6 +15,7 @@
     "mobile:android": "cd mobile && npx react-native run-android",
     "mobile:ios": "cd mobile && npx react-native run-ios",
     "install:all": "npm run backend:install && npm run admin:install && npm run mobile:install",
+    "seed": "cd backend && npm run seed",
     "dev": "docker-compose -f docker-compose.dev.yml up",
     "prod": "docker-compose up -d",
     "stop": "docker-compose down"

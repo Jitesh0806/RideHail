@@ -28,6 +28,10 @@ export class StorageService {
   }
 
   async uploadFile(key: string, buffer: Buffer, contentType: string): Promise<string> {
+    if (!this.config.get('AWS_ACCESS_KEY_ID')) {
+      this.logger.debug(`[Mock] S3 upload skipped for key: ${key}`);
+      return `https://mock-s3.local/${key}`;
+    }
     const cmd = new PutObjectCommand({
       Bucket: this.bucket,
       Key: key,

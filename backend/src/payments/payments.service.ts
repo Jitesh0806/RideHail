@@ -12,11 +12,15 @@ export class PaymentsService {
   private readonly logger = new Logger(PaymentsService.name);
   private readonly stripe: Stripe;
 
+  private readonly stripeEnabled: boolean;
+
   constructor(
     @InjectRepository(Payment) private readonly paymentRepo: Repository<Payment>,
     private readonly config: ConfigService,
   ) {
-    this.stripe = new Stripe(config.get('STRIPE_SECRET_KEY'), {
+    const stripeKey = config.get('STRIPE_SECRET_KEY');
+    this.stripeEnabled = !!stripeKey;
+    this.stripe = new Stripe(stripeKey || 'sk_test_placeholder', {
       apiVersion: '2023-10-16',
     });
   }
@@ -28,6 +32,18 @@ export class PaymentsService {
     amount: number,
     currency: string = 'usd',
   ): Promise<{ clientSecret: string; paymentId: string }> {
+    if (!this.stripeEnabled) {
+      // Mock payment for local dev
+      const payment = this.paymentRepo.create({
+        rideId, riderId, driverId, amount,
+        driverAmount: amount * (1 - PLATFORM_COMMISSION),
+        platformFee: amount * PLATFORM_COMMISSION,
+        currency, status: PaymentStatus.PENDING, method: PaymentMethod.CARD,
+        stripePaymentIntentId: `mock_pi_${Date.now()}`,
+      });
+      await this.paymentRepo.save(payment);
+      return { clientSecret: 'mock_secret_local_dev', paymentId: payment.id };
+    }
     const platformFee = Math.round(amount * PLATFORM_COMMISSION * 100);
     const driverAmount = amount - amount * PLATFORM_COMMISSION;
 
