@@ -1,0 +1,9 @@
+# Terraform state — never commit these
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
+.terraform/
+.terraform.lock.hcl
+
+# Actual vars file with secrets — never commit
+terraform.tfvars

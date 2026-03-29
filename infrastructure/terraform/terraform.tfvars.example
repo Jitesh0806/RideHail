@@ -1,0 +1,33 @@
+# Copy this file to terraform.tfvars and fill in your values
+# cp terraform.tfvars.example terraform.tfvars
+
+# ─── Required ──────────────────────────────────────────────────────────────────
+
+rds_password       = "YourStrongPassword123!"
+jwt_secret         = "your-jwt-secret-min-32-chars-long"
+jwt_refresh_secret = "your-refresh-secret-min-32-chars"
+
+# ─── Optional ──────────────────────────────────────────────────────────────────
+
+aws_region    = "us-east-1"
+environment   = "prod"
+app_name      = "ridehail"
+
+# EC2 key pair name (create one in AWS Console → EC2 → Key Pairs)
+ec2_key_pair_name = "ridehail-key"
+
+# S3 bucket name — must be globally unique across all AWS accounts
+s3_bucket_name = "ridehail-uploads-yourname"
+
+# Stripe (optional — leave blank to use mock payments)
+stripe_secret_key = "sk_test_your_stripe_key"
+
+# Docker image to run on EC2
+# Build and push to ECR first, then paste the image URI here
+docker_image = "123456789.dkr.ecr.us-east-1.amazonaws.com/ridehail-backend:latest"
+
+# ─── Instance sizes (free tier) ────────────────────────────────────────────────
+
+ec2_instance_type    = "t2.micro"
+rds_instance_class   = "db.t3.micro"
+elasticache_node_type = "cache.t3.micro"
