@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Users, Car, Activity, DollarSign, TrendingUp, Clock } from 'lucide-react';
 import { adminApi } from '../services/api';
+import { MOCK_DASHBOARD } from '../services/mockData';
 import { DashboardStats } from '../types';
 
 const StatCard = ({
@@ -29,8 +30,8 @@ export default function DashboardPage() {
       try {
         const { data } = await adminApi.getDashboard();
         setStats(data.data);
-      } catch (err) {
-        console.error(err);
+      } catch {
+        setStats(MOCK_DASHBOARD as DashboardStats);  // demo fallback
       } finally {
         setLoading(false);
       }

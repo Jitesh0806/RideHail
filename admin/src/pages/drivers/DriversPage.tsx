@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Search, Ban } from 'lucide-react';
 import { adminApi } from '../../services/api';
+import { MOCK_DRIVERS } from '../../services/mockData';
 import { Driver } from '../../types';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
@@ -26,12 +27,10 @@ export default function DriversPage() {
   const loadDrivers = useCallback(async () => {
     setLoading(true);
     try {
-      // Using users endpoint filtered for drivers
       const { data } = await adminApi.getUsers(1, 100);
-      // This would ideally be a dedicated /admin/drivers endpoint
       setDrivers(data.data.users.filter((u: any) => u.role === 'driver'));
     } catch {
-      toast.error('Failed to load drivers');
+      setDrivers(MOCK_DRIVERS as any);  // demo fallback
     } finally {
       setLoading(false);
     }

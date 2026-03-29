@@ -4,8 +4,9 @@ import {
   ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend,
 } from 'recharts';
 import { adminApi } from '../../services/api';
+import { MOCK_ANALYTICS } from '../../services/mockData';
 import { Analytics } from '../../types';
-import { format, subDays } from 'date-fns';
+import { subDays } from 'date-fns';
 
 const COLORS = ['#6C63FF', '#34C759', '#FF6B35', '#FF3B30', '#FFD700'];
 
@@ -20,7 +21,7 @@ export default function AnalyticsPage() {
     const end = new Date().toISOString();
     adminApi.getAnalytics(start, end)
       .then(({ data }) => setAnalytics(data.data))
-      .catch(console.error)
+      .catch(() => setAnalytics(MOCK_ANALYTICS as Analytics))  // demo fallback
       .finally(() => setLoading(false));
   }, [dateRange]);
 
