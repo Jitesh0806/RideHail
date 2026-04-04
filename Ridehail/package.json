@@ -1,0 +1,26 @@
+{
+  "name": "ridehail",
+  "version": "1.0.0",
+  "private": true,
+  "description": "RideHail cloud-native ride-hailing platform",
+  "scripts": {
+    "backend:install": "cd backend && npm install",
+    "backend:dev": "cd backend && npm run start:dev",
+    "backend:build": "cd backend && npm run build",
+    "backend:test": "cd backend && npm test",
+    "admin:install": "cd admin && npm install",
+    "admin:dev": "cd admin && npm start",
+    "admin:build": "cd admin && npm run build",
+    "mobile:install": "cd mobile && npm install",
+    "mobile:android": "cd mobile && npx react-native run-android",
+    "mobile:ios": "cd mobile && npx react-native run-ios",
+    "expo:install": "cd mobile-expo && npm install",
+    "expo:start": "cd mobile-expo && npx expo start",
+    "expo:android": "cd mobile-expo && npx expo start --android",
+    "install:all": "npm run backend:install && npm run admin:install && npm run mobile:install && npm run expo:install",
+    "seed": "cd backend && npm run seed",
+    "dev": "docker-compose -f docker-compose.dev.yml up",
+    "prod": "docker-compose up -d",
+    "stop": "docker-compose down"
+  }
+}

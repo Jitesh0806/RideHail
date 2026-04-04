@@ -1,0 +1,60 @@
+version: '3.9'
+
+# Development override - hot reload, dev tools
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ridehail
+      POSTGRES_PASSWORD: ridehail_password
+      POSTGRES_DB: ridehail_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ridehail-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - ridehail-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: builder
+    command: npm run start:dev
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: ridehail
+      DB_PASSWORD: ridehail_password
+      DB_NAME: ridehail_db
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: dev-secret-key-at-least-32-characters
+      JWT_REFRESH_SECRET: dev-refresh-secret-key-32-chars
+    ports:
+      - "3000:3000"
+      - "9229:9229"  # Debug port
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/package.json:/app/package.json
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - ridehail-network
+
+volumes:
+  postgres_data:
+
+networks:
+  ridehail-network:
+    driver: bridge
