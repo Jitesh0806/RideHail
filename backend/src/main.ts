@@ -19,7 +19,7 @@ async function bootstrap() {
   const nodeEnv = configService.get<string>('NODE_ENV', 'development');
 
   // Security
-  app.use(helmet());
+  app.use((helmet as any)());
   app.use(compression());
 
   // CORS

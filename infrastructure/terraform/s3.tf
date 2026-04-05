@@ -57,6 +57,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "uploads" {
     id     = "cleanup-incomplete-uploads"
     status = "Enabled"
 
+    filter {
+      prefix = ""
+    }
+
     abort_incomplete_multipart_upload {
       days_after_initiation = 7
     }
@@ -84,6 +88,27 @@ resource "aws_iam_policy" "s3_access" {
           aws_s3_bucket.uploads.arn,
           "${aws_s3_bucket.uploads.arn}/*"
         ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "ecr_access" {
+  name        = "${var.app_name}-ecr-access"
+  description = "Allow EC2 to pull images from ECR"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage"
+        ]
+        Resource = "*"
       }
     ]
   })

@@ -15,7 +15,7 @@ resource "aws_db_instance" "postgres" {
 
   # Engine
   engine               = "postgres"
-  engine_version       = "15.4"
+  engine_version       = "15"
   instance_class       = var.rds_instance_class
   allocated_storage    = var.rds_allocated_storage
   max_allocated_storage = 100 # auto-scaling storage up to 100GB
@@ -34,7 +34,7 @@ resource "aws_db_instance" "postgres" {
   publicly_accessible    = false # only accessible from inside VPC
 
   # Backups
-  backup_retention_period = 7    # keep 7 days of backups
+  backup_retention_period = 0    # keep 7 days of backups
   backup_window           = "03:00-04:00"
   maintenance_window      = "Mon:04:00-Mon:05:00"
 

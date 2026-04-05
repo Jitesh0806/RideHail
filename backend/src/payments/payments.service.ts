@@ -21,7 +21,7 @@ export class PaymentsService {
     const stripeKey = config.get('STRIPE_SECRET_KEY');
     this.stripeEnabled = !!stripeKey;
     this.stripe = new Stripe(stripeKey || 'sk_test_placeholder', {
-      apiVersion: '2023-10-16',
+      apiVersion: '2023-08-16',
     });
   }
 

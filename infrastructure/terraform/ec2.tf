@@ -118,7 +118,7 @@ resource "aws_instance" "backend" {
   user_data_replace_on_change = true
 
   root_block_device {
-    volume_size = 20
+    volume_size = 30
     volume_type = "gp3"
     encrypted   = true
   }
@@ -138,4 +138,14 @@ resource "aws_eip" "backend" {
   instance = aws_instance.backend.id
   domain   = "vpc"
   tags     = { Name = "${var.app_name}-backend-eip" }
+}
+
+resource "aws_iam_role_policy_attachment" "ec2_ecr" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = aws_iam_policy.ecr_access.arn
+}
+
+resource "aws_iam_role_policy_attachment" "ec2_ssm" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
