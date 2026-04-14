@@ -1,3 +1,4 @@
+```markdown
 # 🚗 RideHail — Cloud-Native Ride-Hailing Platform
 
 A full-stack, production-ready ride-hailing system built with modern cloud architecture.
@@ -8,26 +9,25 @@ A full-stack, production-ready ride-hailing system built with modern cloud archi
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        AWS Cloud (Phase 1)                       │
+│                        AWS Cloud                                  │
 │                                                                   │
 │  ┌──────────┐    ┌──────────────┐    ┌──────────────────────┐   │
-│  │  Rider   │    │  API Gateway  │    │  NestJS Backend      │   │
-│  │  Mobile  │◄──►│  (HTTPS/WSS) │◄──►│  (EC2 / ECS)        │   │
-│  │  (RN)    │    └──────────────┘    │                      │   │
+│  │  Rider   │    │     ALB       │    │  NestJS Backend      │   │
+│  │  Mobile  │◄──►│  (Port 8080) │◄──►│  (EC2 t3.micro)     │   │
+│  │  (Expo)  │    └──────────────┘    │                      │   │
 │  └──────────┘                        │  ┌────────────────┐  │   │
-│                                      │  │  PostgreSQL     │  │   │
-│  ┌──────────┐                        │  │  (RDS)         │  │   │
-│  │  Driver  │    ┌──────────────┐    │  └────────────────┘  │   │
-│  │  Mobile  │◄──►│  WebSocket   │◄──►│  ┌────────────────┐  │   │
-│  │  (RN)    │    │  (Socket.IO) │    │  │  Redis Cache    │  │   │
-│  └──────────┘    └──────────────┘    │  │  (ElastiCache) │  │   │
+│                                      │  │  PostgreSQL 15  │  │   │
+│  ┌──────────┐    ┌──────────────┐    │  │  (RDS)         │  │   │
+│  │  Driver  │◄──►│  WebSocket   │◄──►│  └────────────────┘  │   │
+│  │  Mobile  │    │  (Socket.IO) │    │  ┌────────────────┐  │   │
+│  │  (Expo)  │    └──────────────┘    │  │  Redis Cache    │  │   │
+│  └──────────┘                        │  │  (ElastiCache) │  │   │
 │                                      │  └────────────────┘  │   │
-│  ┌──────────┐    ┌──────────────┐    └──────────────────────┘   │
-│  │  Admin   │◄──►│  React Admin │         │          │           │
-│  │  Panel   │    │  Dashboard   │      AWS S3      AWS SNS       │
-│  │  (React) │    └──────────────┘    (Storage)  (Push Notifs)   │
+│  ┌──────────┐                        └──────────────────────┘   │
+│  │  Admin   │                             │          │           │
+│  │  Panel   │                          AWS S3      AWS SNS       │
+│  │  (React) │                        (Storage)  (Notifications) │
 │  └──────────┘                                                     │
-│                            AWS Cognito (Auth)                     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -38,17 +38,33 @@ A full-stack, production-ready ride-hailing system built with modern cloud archi
 | Layer | Technology |
 |-------|-----------|
 | **Backend** | NestJS (Node.js) + TypeScript |
-| **Mobile** | React Native (iOS + Android) |
-| **Admin** | React + Tailwind CSS |
-| **Database** | PostgreSQL (AWS RDS) |
-| **Cache** | Redis (AWS ElastiCache) |
+| **Mobile** | React Native + Expo SDK 53 |
+| **Admin** | React + Vite + Tailwind CSS |
+| **Database** | PostgreSQL 15 (AWS RDS) |
+| **Cache** | Redis 7 (AWS ElastiCache) |
 | **Real-Time** | WebSockets (Socket.IO) |
-| **Auth** | JWT + AWS Cognito |
+| **Auth** | JWT (Access + Refresh tokens) |
 | **Storage** | AWS S3 |
 | **Notifications** | AWS SNS |
 | **Payments** | Stripe |
-| **Containerization** | Docker |
-| **CI/CD** | GitHub Actions → AWS ECR/ECS |
+| **Containerization** | Docker + AWS ECR |
+| **Infrastructure** | Terraform (IaC) |
+| **Maps** | Google Maps (react-native-maps) |
+
+---
+
+## ☁️ AWS Services Used
+
+| Service | Usage |
+|---------|-------|
+| **EC2 (t3.micro)** | Backend hosting (Docker container) |
+| **RDS (PostgreSQL 15)** | Primary database |
+| **ElastiCache (Redis 7)** | Caching, session management |
+| **S3** | Profile pics, driver documents |
+| **SNS** | Push notifications |
+| **ALB** | Load balancer (port 8080 → 3000) |
+| **VPC** | Network isolation (public + private subnets) |
+| **ECR** | Docker image registry |
 
 ---
 
@@ -56,38 +72,28 @@ A full-stack, production-ready ride-hailing system built with modern cloud archi
 
 ### Prerequisites
 - Node.js 20+
-- Docker & Docker Compose
-- PostgreSQL 15+ (or use Docker)
+- Docker
+- AWS CLI (for deployment)
+- Terraform (for infrastructure)
+- EAS CLI (for mobile builds)
 
-### 1. Clone & Setup Backend
+---
+
+### 1. Backend (Local)
 
 ```bash
 cd backend
 cp .env.example .env
 # Edit .env with your credentials
 npm install
-```
-
-### 2. Start with Docker Compose (Recommended)
-
-```bash
-# Development (with hot reload)
-docker-compose -f docker-compose.dev.yml up
-
-# Production
-docker-compose up -d
-```
-
-### 3. Start Backend Standalone
-
-```bash
-cd backend
 npm run start:dev
 # API: http://localhost:3000
 # Swagger: http://localhost:3000/api/docs
 ```
 
-### 4. Start Admin Panel
+---
+
+### 2. Admin Panel (Local)
 
 ```bash
 cd admin
@@ -96,22 +102,57 @@ npm start
 # Admin: http://localhost:3001
 ```
 
-### 5. Mobile App
+---
+
+### 3. Mobile App (Expo)
 
 ```bash
-cd mobile
-npm install
-# iOS
-npx react-native run-ios
-# Android
-npx react-native run-android
+cd mobile-expo
+cp .env.example .env
+# Set EXPO_PUBLIC_API_URL in .env
+npm install --legacy-peer-deps
+
+# Run with Expo Go (no maps)
+npx expo start
+
+# Build APK with native maps (EAS Build)
+eas build --platform android --profile development
+```
+
+> react-native-maps requires a native build via EAS. Expo Go does not support it.
+
+---
+
+### 4. Infrastructure (AWS via Terraform)
+
+```bash
+cd infrastructure/terraform
+cp terraform.tfvars.example terraform.tfvars
+# Fill in your values (RDS password, JWT secrets, etc.)
+
+terraform init
+terraform plan
+terraform apply
+# Provisions: VPC, EC2, RDS, ElastiCache, S3, SNS, ALB
+```
+
+---
+
+### 5. Deploy Backend to EC2
+
+```bash
+# Build and push Docker image to ECR
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <account>.dkr.ecr.us-east-1.amazonaws.com
+docker build -t ridehail-backend ./backend
+docker tag ridehail-backend:latest <account>.dkr.ecr.us-east-1.amazonaws.com/ridehail-backend:latest
+docker push <account>.dkr.ecr.us-east-1.amazonaws.com/ridehail-backend:latest
 ```
 
 ---
 
 ## 📡 API Documentation
 
-Swagger UI available at `http://localhost:3000/api/docs` in development.
+Swagger UI: `http://localhost:3000/api/docs`
 
 ### Key Endpoints
 
@@ -159,17 +200,15 @@ Rider requests ride
         ▼
 Backend searches drivers (3km radius)
         │
-        ├── No drivers found → expand to 5km (2min)
-        │   └── Expand to 8km → 10km → notify rider
+        ├── No drivers found → expand to 5km → 8km → 10km
         │
-        └── Driver found → push notification + WebSocket
+        └── Driver found → WebSocket notification
                 │
                 ▼
         Driver accepts → status: driver_assigned
                 │
                 ▼
-        Driver navigates → status: driver_en_route
-        (real-time GPS every 5s via WebSocket)
+        Driver navigates → real-time GPS every 5s
                 │
                 ▼
         Driver arrives → status: driver_arrived
@@ -183,59 +222,36 @@ Backend searches drivers (3km radius)
 
 ---
 
-## ☁️ AWS Services Used
-
-| Service | Usage |
-|---------|-------|
-| **EC2 / ECS** | Backend hosting |
-| **RDS (PostgreSQL)** | Primary database |
-| **ElastiCache (Redis)** | Caching driver locations |
-| **S3** | Profile pics, driver documents |
-| **Cognito** | User authentication |
-| **SNS** | Push notifications |
-| **API Gateway** | HTTP + WebSocket routing |
-| **CloudWatch** | Monitoring & logging |
-| **VPC** | Network isolation |
-
----
-
-## 🐳 Deployment Phases
-
-### Phase 1 (Current): EC2 + Docker
-```
-GitHub Actions → Docker Build → ECR → ECS (EC2 mode)
-```
-
-### Phase 2: Add auto-scaling
-```
-ECS + Application Auto Scaling based on CPU/memory
-```
-
-### Phase 3: Kubernetes (EKS) + Microservices
-```
-Break into: auth-service, ride-service, location-service,
-            notification-service, payment-service
-Each service independently deployable with HPA
-```
-
----
-
-## 📊 Database Schema
-
-Key tables: `users`, `drivers`, `rides`, `payments`, `ratings`, `location_history`
-
----
-
 ## 🔐 Environment Variables
 
-See `backend/.env.example` for all required variables.
+### Backend (`backend/.env`)
+```
+NODE_ENV=production
+PORT=3000
+DB_HOST=<rds-endpoint>
+DB_PORT=5432
+DB_NAME=ridehail
+DB_USER=ridehail_user
+DB_PASSWORD=<your-password>
+REDIS_HOST=<elasticache-endpoint>
+REDIS_PORT=6379
+JWT_SECRET=<min-32-chars>
+JWT_REFRESH_SECRET=<min-32-chars>
+AWS_REGION=us-east-1
+AWS_S3_BUCKET=<your-bucket>
+AWS_SNS_TOPIC_ARN=<your-topic-arn>
+STRIPE_SECRET_KEY=<your-stripe-key>
+```
 
-**Required for production:**
-- `JWT_SECRET` (min 32 chars)
-- `DB_*` (PostgreSQL connection)
-- `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`
-- `STRIPE_SECRET_KEY`
-- `COGNITO_USER_POOL_ID` / `COGNITO_CLIENT_ID`
+### Mobile (`mobile-expo/.env`)
+```
+EXPO_PUBLIC_API_URL=http://<your-ec2-ip>:3000
+```
+
+### Admin (`admin/.env`)
+```
+VITE_API_URL=http://<your-ec2-ip>:3000/api/v1
+```
 
 ---
 
@@ -267,3 +283,16 @@ See `backend/.env.example` for all required variables.
 - **Drivers**: View all, suspend
 - **Pending Approvals**: Review & approve/reject new drivers
 - **Analytics**: Peak hours, completion rates, revenue breakdown
+
+---
+
+## 📊 Database Schema
+
+Key tables: `users`, `drivers`, `rides`, `payments`, `ratings`, `location_history`
+
+Seed the database:
+```bash
+cd backend
+node -e "/* see seed script in src/database/seed.ts */"
+```
+```
