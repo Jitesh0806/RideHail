@@ -1,9 +1,9 @@
-```markdown
 # 🚗 RideHail — Cloud-Native Ride-Hailing Platform
 
 A full-stack, production-ready ride-hailing system built with modern cloud architecture.
 
 ---
+
 ## 📐 Architecture Overview
 
 | Component | Technology | AWS Service |
@@ -19,7 +19,6 @@ A full-stack, production-ready ride-hailing system built with modern cloud archi
 | Container Registry | Docker | ECR |
 | Networking | — | VPC |
 | Real-Time | Socket.IO (WebSocket) | — |
-
 
 ---
 
@@ -165,6 +164,7 @@ Swagger UI: `http://localhost:3000/api/docs`
 Connect to: `ws://localhost:3000/ridehail`
 
 ### Client → Server
+
 | Event | Description |
 |-------|-------------|
 | `driver:location_update` | Driver sends GPS location |
@@ -173,6 +173,7 @@ Connect to: `ws://localhost:3000/ridehail`
 | `ride:join` | Join ride room for updates |
 
 ### Server → Client
+
 | Event | Description |
 |-------|-------------|
 | `driver:location` | Live driver GPS coordinates |
@@ -251,7 +252,7 @@ VITE_API_URL=http://<your-ec2-ip>:3000/api/v1
 - Sign up / Login
 - Enter pickup & destination
 - View nearby drivers on map (live markers)
-- Select vehicle type (Economy/Standard/Premium/XL)
+- Select vehicle type (Economy / Standard / Premium / XL)
 - Track driver in real-time
 - Rate driver after trip
 - View ride history
@@ -259,7 +260,7 @@ VITE_API_URL=http://<your-ec2-ip>:3000/api/v1
 ### Driver
 - Register with license & vehicle info
 - Go online/offline toggle
-- Receive ride requests with Accept/Reject
+- Receive ride requests with Accept / Reject
 - Navigate to rider → start trip → complete trip
 - View earnings dashboard
 
@@ -279,10 +280,3 @@ VITE_API_URL=http://<your-ec2-ip>:3000/api/v1
 ## 📊 Database Schema
 
 Key tables: `users`, `drivers`, `rides`, `payments`, `ratings`, `location_history`
-
-Seed the database:
-```bash
-cd backend
-node -e "/* see seed script in src/database/seed.ts */"
-```
-```
