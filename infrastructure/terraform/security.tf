@@ -56,14 +56,6 @@ resource "aws_security_group" "ec2" {
     cidr_blocks = ["0.0.0.0/0"] # Restrict to your IP in production
   }
 
-  ingress {
-    description = "Direct app access for testing"
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  
   egress {
     from_port   = 0
     to_port     = 0

@@ -22,6 +22,9 @@ s3_bucket_name = "ridehail-uploads-yourname"
 # Stripe (optional — leave blank to use mock payments)
 stripe_secret_key = "sk_test_your_stripe_key"
 
+# Email to receive CloudWatch alerts (EC2 down, CPU high, RDS low storage)
+alert_email = "you@example.com"
+
 # Docker image to run on EC2
 # Build and push to ECR first, then paste the image URI here
 docker_image = "123456789.dkr.ecr.us-east-1.amazonaws.com/ridehail-backend:latest"
