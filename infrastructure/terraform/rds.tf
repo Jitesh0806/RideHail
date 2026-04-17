@@ -33,8 +33,8 @@ resource "aws_db_instance" "postgres" {
   vpc_security_group_ids = [aws_security_group.rds.id]
   publicly_accessible    = false # only accessible from inside VPC
 
-  # Backups
-  backup_retention_period = 7    # keep 7 days of backups
+  # Backups — free tier does not support backup_retention_period > 0
+  backup_retention_period = 0
   backup_window           = "03:00-04:00"
   maintenance_window      = "Mon:04:00-Mon:05:00"
 
