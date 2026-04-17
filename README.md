@@ -50,10 +50,11 @@ A full-stack, production-ready ride-hailing system built with modern cloud archi
 | **RDS (PostgreSQL 15)** | Primary database |
 | **ElastiCache (Redis 7)** | Caching, session management |
 | **S3** | Profile pics, driver documents |
-| **SNS** | Push notifications |
+| **SNS** | Push notifications + alert emails |
 | **ALB** | Load balancer (port 8080 → 3000) |
 | **VPC** | Network isolation (public + private subnets) |
 | **ECR** | Docker image registry |
+| **CloudWatch** | Monitoring, alarms, dashboard |
 
 ---
 
@@ -280,3 +281,21 @@ VITE_API_URL=http://<your-ec2-ip>:3000/api/v1
 ## 📊 Database Schema
 
 Key tables: `users`, `drivers`, `rides`, `payments`, `ratings`, `location_history`
+
+---
+
+## 📈 Monitoring
+
+CloudWatch alarms are provisioned via Terraform and send email alerts for:
+
+| Alarm | Threshold |
+|-------|-----------|
+| EC2 CPU High | > 80% for 4 min |
+| EC2 Status Check Failed | Any failure |
+| RDS CPU High | > 80% for 4 min |
+| RDS Free Storage Low | < 1 GB |
+| RDS Connections High | > 80 connections |
+| Redis CPU High | > 80% for 4 min |
+| Redis Memory High | > 80% for 4 min |
+
+View the live dashboard: **AWS Console → CloudWatch → Dashboards → `ridehail-dashboard`**
