@@ -147,43 +147,63 @@ resource "aws_cloudwatch_dashboard" "main" {
   dashboard_body = jsonencode({
     widgets = [
       {
-        type = "metric"
+        type   = "metric"
+        x      = 0
+        y      = 0
+        width  = 12
+        height = 6
         properties = {
-          title  = "EC2 CPU Utilization"
+          title   = "EC2 CPU Utilization"
+          region  = var.aws_region
           metrics = [["AWS/EC2", "CPUUtilization", "InstanceId", aws_instance.backend.id]]
-          period = 300
-          stat   = "Average"
-          view   = "timeSeries"
+          period  = 300
+          stat    = "Average"
+          view    = "timeSeries"
         }
       },
       {
-        type = "metric"
+        type   = "metric"
+        x      = 12
+        y      = 0
+        width  = 12
+        height = 6
         properties = {
-          title  = "RDS CPU Utilization"
+          title   = "RDS CPU Utilization"
+          region  = var.aws_region
           metrics = [["AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", aws_db_instance.postgres.id]]
-          period = 300
-          stat   = "Average"
-          view   = "timeSeries"
+          period  = 300
+          stat    = "Average"
+          view    = "timeSeries"
         }
       },
       {
-        type = "metric"
+        type   = "metric"
+        x      = 0
+        y      = 6
+        width  = 12
+        height = 6
         properties = {
-          title  = "RDS Free Storage"
+          title   = "RDS Free Storage"
+          region  = var.aws_region
           metrics = [["AWS/RDS", "FreeStorageSpace", "DBInstanceIdentifier", aws_db_instance.postgres.id]]
-          period = 300
-          stat   = "Average"
-          view   = "timeSeries"
+          period  = 300
+          stat    = "Average"
+          view    = "timeSeries"
         }
       },
       {
-        type = "metric"
+        type   = "metric"
+        x      = 12
+        y      = 6
+        width  = 12
+        height = 6
         properties = {
-          title  = "Redis CPU Utilization"
+          title   = "Redis CPU Utilization"
+          region  = var.aws_region
           metrics = [["AWS/ElastiCache", "CPUUtilization", "CacheClusterId", aws_elasticache_cluster.redis.id]]
-          period = 300
-          stat   = "Average"
-          view   = "timeSeries"
+          period  = 300
+          stat    = "Average"
+          view    = "timeSeries"
         }
       }
     ]
